@@ -1,0 +1,38 @@
+# Nom du workflow (apparaît dans l'interface GitHub Actions)
+name: Control Push
+
+# Ce workflow s'exécute lorsqu'il y a un "push" (nouveau code poussé sur le dépôt GitHub)
+on: push
+
+# Définition des jobs (tâches) à exécuter
+jobs:
+  qa:  # Nom de la tâche (peut être personnalisé)
+    name: Check tests  # Nom de la tâche affichée dans l'interface GitHub Actions
+    runs-on: ubuntu-20.04  # Environnement sur lequel la tâche s'exécute : Ubuntu 20.04
+
+    # Les étapes (steps) qui vont être exécutées dans ce job
+    steps:
+      # Étape 1 : Checkout - Récupère le code de la branche du dépôt
+      - name: Checkout on master  # Nom de l'étape : Récupérer le code
+        uses: actions/checkout@v3  # Utilise une action GitHub prédéfinie pour cloner le dépôt
+
+      # Étape 2 : Configurer Python
+      - name: Set up Python  # Nom de l'étape : Configurer Python
+        uses: actions/setup-python@master  # Utilise l'action setup-python pour installer Python
+        with:
+          python-version: "3.x"  # Version de Python à installer (ici, n'importe quelle version 3.x)
+
+      # Étape 3 : Installer pytest et flake8
+      - name: Install pytest and flake8  # Nom de l'étape : Installer pytest et flake8
+        run: |  # Exécute des commandes shell sur l'instance Ubuntu
+          pip install pytest  # Installe pytest pour exécuter des tests unitaires
+          pip install flake8  # Installe flake8 pour vérifier le style de code selon PEP8
+
+      # Étape 4 : Exécuter les tests
+      - name: Run tests  # Nom de l'étape : Lancer les tests
+        run: |
+          pytest  # Exécute pytest pour rechercher et exécuter tous les tests dans le projet
+
+      # Étape 5 : Exécuter flake8 pour vérifier la conformité au style de code PEP8
+      - name: Run flake8  # Nom de l'étape : Lancer flake8
+        uses: py-actions/flake8@v2  # Utilise une action flake8 pour effectuer la vérification du style de code
